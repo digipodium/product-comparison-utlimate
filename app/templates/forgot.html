@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block css %}
+<style>
+  body{
+    background-color: rgb(0, 0, 0);
+  }
+</style>
+{% endblock %}
+
+
+{% block body %}
+<div class="container">
+  <div class="row justify-items-center">
+    <div class="col-md-6 mt-3 mx-auto">
+        {% include "notify.html" %}
+      <div class="card shadow-lg border-0">
+        <div class="card-header">
+          <h3 class="display-4"><i class="fas fa-user-shield text-primary"></i>Reset Password</h3>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Fill in your credentials</h3>
+          <form method="post">
+            <div class="form-group">
+              <label for="email">Registerd Email Address</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text bg-primary" id="basic-addon1"><i class="fas fa-envelope text-white"></i></span>
+                </div>
+                <input type="email" class="form-control" name="email" id="email" aria-describedby="emailHelpId" placeholder="alex@gmail.com">
+              </div>
+              <small id="emailHelpId" class="form-text text-muted"></small>
+            </div>
+            <button class="btn btn-outline-primary btn-lg btn-block">Send verification mail <i class="fa fa-arrow-right" aria-hidden="true"></i> </button>
+          </form>
+        </div>
+        <div class="card-footer bg-secondary">
+          <a name="" id="" class="btn btn-primary" href="/login">Go to Login</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

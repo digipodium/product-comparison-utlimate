@@ -1,13 +1,23 @@
-from flask import render_template,redirect,request,flash,session,url_for
+from flask import render_template,redirect,request,flash,session,url_for, jsonify
 from flask_login import logout_user,current_user, login_user, login_required
 from app import app,db
 from app.models import User
+import os
+import pandas as pd
 from datetime import datetime
+from app.scrapers import snapdeal,flipcart
 
-@app.route('/')
+@app.route('/',)
 @app.route('/index')
 @login_required
 def index():
+    try:
+        del session['keyword']
+        del session['sort_order']
+        del session['page_limit']
+        del session['delay'] 
+        del session['executing']
+    except :pass
     return render_template('index.html',title='home')
 
 @app.route('/login',methods=['GET', 'POST'])
@@ -63,7 +73,7 @@ def forgot():
     if request.method=='POST':
         email = request.form.get('email')
         if email:
-            pass
+            flash('password sent to email, please check your inbox')
     return render_template('forgot.html', title='Password reset page')
     
 
@@ -95,3 +105,54 @@ def edit_profile():
         flash('Your changes have been saved.','success')
         return redirect(url_for('edit_profile'))
     return render_template('edit_profile.html', title='Edit Profile',user=user)
+
+
+
+@app.route('/scraper_run',methods=['GET','POST'])
+def scraper_run_api():
+    if request.method == 'POST':
+        keyword = request.form.get('keyword')
+        sort_order = request.form.get('sort')
+        page_limit = request.form.get('page_limit')
+        delay =request.form.get('delay')
+        if keyword and sort_order and page_limit:
+            session['keyword'] = keyword
+            session['sort_order'] = sort_order
+            session['page_limit'] = page_limit
+            session['delay'] = delay
+        else:
+            flash("please enter an item category to search and compare using scraper",'danger')
+            return redirect('/')
+    return render_template('search.html',title="Search to Compare")
+
+@app.route('/execute',methods=['POST'])
+def execute_scrapers():
+    if request.method == 'POST':
+        with open('scraper.log','w') as f:
+            f.write(f"starting scraper\n")
+        keyword = session['keyword']
+        sort_order = session['sort_order']
+        page_limit = session['page_limit']
+        delay = session['delay'] 
+        print(session)
+        sop = snapdeal.sort_options.get(sort_order)
+        print(sort_order)
+        message = flipcart.collect_n_store(query=keyword,count=int(page_limit),delay=int(delay),sorting=sop)
+        print(message)
+        message = snapdeal.collect_n_store(query=keyword,count=int(page_limit),delay=int(delay),sorting=sop)
+        print(message)
+        session['executing'] = False
+    return jsonify(status='success',scraper_status = session['executing'])
+
+@app.route('/scraper_status')
+def scraper_status_api():
+    if os.path.exists('scraper.log'):
+        try:
+            f = open('scraper.log')
+            for size,last_line in enumerate(f):
+                pass
+            f.close()
+            return jsonify(size=size,last_line=last_line)
+        except Exception as e:
+            print(e)
+            return jsonify(size='unknown',last_line='unknown')

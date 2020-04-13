@@ -1,14 +1,160 @@
 {% extends 'base.html' %}
-{% block body %}
-    <div class="jumbotron">
-        <h1 class="display-3">Welcome</h1>
-        <p class="lead">Use this example</p>
-        <hr class="my-2">
-        <p>as a template</p>
-        <p class="lead">
-            <a class="btn btn-primary btn-lg" href="Jumbo action link" role="button">download template</a>
-        </p>
-    </div>
+
+{% block css %}
+<style>
+    input[type=range] {
+        -webkit-appearance: none;
+        margin: 20px 0;
+        width: 100%;
+    }
+    input[type=range]:focus {
+        outline: none;
+    }
+    input[type=range]::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 4px;
+        cursor: pointer;
+        animate: 0.2s;
+        background: #03a9f4;
+        border-radius: 25px;
+    }
+    input[type=range]::-webkit-slider-thumb {
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 0 4px 0 rgba(0,0,0, 1);
+        cursor: pointer;
+        -webkit-appearance: none;
+        margin-top: -8px;
+    }
+    input[type=range]:focus::-webkit-slider-runnable-track {
+        background: #03a9f4;
+    }
+    .range-wrap{
+        width: 500px;
+        position: relative;
+    }
+    .range-value{
+        position: absolute;
+        top: -50%;
+    }
+    .range-value span{
+        width: 30px;
+        height: 24px;
+        line-height: 24px;
+        text-align: center;
+        background: #03a9f4;
+        color: #fff;
+        font-size: 12px;
+        display: block;
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, 0);
+        border-radius: 6px;
+    }
+    .range-value span:before{
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-top: 10px solid #03a9f4;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        margin-top: -1px;
+    }
+</style>
 {% endblock %}
+
+
+{% block body %}
+{% include "notify.html" %}
+<div class="container-fluid py-4">
+ 
+    <div class="row">
+        
+        <div class="col-sm-12 col-md-8 mx-auto">
+            <form method = "POST" action="/scraper_run" autocomplete="off">
+                <div class="form-group ">
+                    <div class="input-group mb-4 border rounded-pill p-1">
+                        <div class="input-group-append ">
+                            <button id="searchbtn" class="btn btn-link text-info"><i class="fa fa-search fa-2x  "></i></button>
+                        </div>
+                        <input type="search" name="keyword" placeholder="What're you searching for?" aria-describedby="searchbtn" class="form-control border-0 form-control-lg bg-transparent">
+                    </div>
+                    <small id="searchbtn" class="form-text text-primary text-center">enter a product category to search like laptop, book, saree, bags, etc</small>
+                </div>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6">
+                            <div class="form-group border p-4">
+                                <label for="count"><i class="fas fa-weight text-info fa-2x   "></i> Max page count from each website <span class="badge badge-pill badge-primary counter">10</span></label>
+                                <input type="range" name="page_limit" min=1 max="500" value="10" class="form-control-range slider" id="count">
+                                <small id="counterhelp" class="form-text text-primary">the count(size) of products to be scraped is proportional to time, for fast execution select a small number like 50. Also internet speed also is important factor.</small>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div class="form-group border p-4">
+                                <label for="count"> <i class="fas fa-stopwatch text-info fa-2x "></i> Set a delay <span class="badge badge-pill badge-primary delayval"> 1 </span> sec</label>
+                                <input type="range" name="delay" min=0 max="5" value="1" class="form-control-range slider" id="delay">
+                                <small id="delayhelp" class="form-text text-primary">Adding a delay decreases the chances of a website to block your Ip address, if delay is set to zero, you may be blocked for 3 days. default 1 is okay. increase in delay increase the time to collect data also.(be patient)</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6">
+                            <div class="form-group">
+                              <div class="form-group">
+                                <label for="sort">Sort product by</label>
+                                <select class="form-control form-control-lg" name="sort" id="sort">
+                                  <option>relevance</option>
+                                  <option>popularity</option>
+                                  <option>price low to high</option>
+                                  <option>price high to low</option>
+                                  <option>discount</option>
+                                  <option>new arrivals</option>
+                                </select>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="submit">Ready to Scrape, click the button</label>
+                                <button name="submit" id="submit" class="btn btn-outline-danger btn-lg btn-block">Start Scraper</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    
+    $(function () {
+        $('#count').mouseup(function(e){
+            $('.counter').text( $(this).val())
+            console.log($(this).val())
+        })
+        $('#delay').mouseup(function(e){
+            $('.delayval').text( $(this).val())
+            console.log($(this).val())
+        })
+    });
+    
+</script>
+{% endblock %}
+
 
 

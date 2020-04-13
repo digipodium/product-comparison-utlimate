@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% block css %}
+<style>
+    /* progress bar animation */
+    @keyframes bar2 {
+        0% {
+            transform: scaleX(.08);
+        }
+        
+        36.65% {
+            animation-timing-function: cubic-bezier(.334731, .12482, .785844, 1);
+            transform: scaleX(.08);
+        }
+        
+        69.15% {
+            animation-timing-function: cubic-bezier(.06, .11, .6, 1);
+            transform: scaleX(.661479);
+        }
+        
+        100% {transform: scaleX(.08);}
+    }
+    
+    @keyframes bar1 {
+        0% {transform: translateX(0);}
+        
+        20% {
+            animation-timing-function: cubic-bezier(.5, 0, .701732, .495819);
+            transform: translateX(0);
+        }
+        
+        59.15% {
+            animation-timing-function: cubic-bezier(.302435, .381352, .55, .956352);
+            transform: translateX(83.67142%);
+        }
+        
+        100% {transform: translateX(200.611057%);}
+    }
+    
+    .loader {
+        position: relative;
+        width: calc(80% + 10vw);
+        height: 20px;
+        overflow: hidden;
+        margin: auto;
+        border-radius: 100px;
+        background-color: #f2f3f4;
+    }
+    
+    .loader__bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        
+        width: 100%;
+        height: 100%;
+    }
+    
+    .loader__bar--1 {
+        left: -100%;
+        
+        background-color: #5d06ff;
+        border-radius: 100px;
+        animation: 2s bar1 infinite linear;
+    }
+    
+    .loader__bar--2 {
+        background-color: #fff;
+        
+        animation: 2s bar2 infinite linear;
+    }
+    
+    .loader--alternate .loader__bar--2 {
+        transform-origin: left;
+    }
+    /* end of progress bar animation */
+    
+</style>
+{% endblock %}
+{% block body %}
+
+<div class="container">
+    <div class="row mt-3">
+        <div class="col-sm-12">
+            <p class="lead text-center">
+                Dont refresh the page, Scraper is running. After completion update will be displayed
+            </p>
+            <div aria-hidden="true" class="loader">
+                <div class="loader__bar loader__bar--1">
+                    <div class="loader__bar loader__bar--2"></div>
+                </div>
+            </div>
+        </div>  
+    </div>
+    <div class="row mt-3">
+        <div class="col-sm-3 mt-xs-1">
+            <div class="card bg-secondary text-white">
+                <div class="card-body">
+                    <div class="card-title">Keyword</div>
+                    
+                    <b>{{session.keyword}}</b>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 mt-xs-1">
+            <div class="card bg-secondary text-white">
+                <div class="card-body">
+                    <div class="card-title">Page Size</div>
+                    
+                    <b>{{session.page_limit}}</b>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 mt-xs-1">
+            <div class="card bg-secondary text-white">
+                <div class="card-body">
+                    <div class="card-title">Delay (in sec)</div>
+                    
+                    <b>{{session.delay}}</b>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 mt-xs-1">
+            <div class="card bg-secondary text-white">
+                <div class="card-body">
+                    <div class="card-title">Sort style</div>
+                    
+                    <b>{{session.sort_order}}</b>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-3">
+        <div class="col-12">
+            
+            <div class="card container">
+                
+                <div class="card-body text-center">
+                    <h3 class="display-4 scraper_state">Scraping Status : <span class="badge badge-pill badge-primary">Running</span></h3>
+                    <p class="card-text">we will check updates periodically</p>
+                </div>
+                <ul class="list-group list-group-flush" id="api_status">
+                    <li class="list-group-item text-center">started scraping</li>
+                </ul>
+              
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block js %}
+<script>
+    function getStatus(){
+        $.ajax({
+            url: '/scraper_status',
+            type: 'get',
+            success: function(response){
+                console.log("status"+response['last_line'],+response['size'])
+                $('#api_status li').slideUp().html('<b>'+response['size']+' - '+response['last_line']+'</b>').slideDown()
+            }
+        });
+    }
+
+    function updateUI(status) {
+        $('.scraper_state span').text("Complete").toggleClass("badge-success badge-primary")
+        $('.card.container').append('<div class="card-footer">'+status+' <a  class="btn btn-success" href="/view_results" >View Result</a> </div>')
+        $('.loader').slideUp()
+    }
+    $(function () {
+        data ={}
+        let scraper_status = "running"
+        let interval;
+        if(scraper_status == "running"){
+            interval = setInterval(getStatus,3000);
+        }
+        $.ajax({
+            type: "POST",
+            url: "/execute",
+            data: "",
+            dataType: "text/plain",
+            success: function (response) {
+                console.log(response['status']+"\n"+response['scraper_status'])
+                clearInterval(interval)
+                alert('done')
+                updateUI(response['status'])
+            }
+        });
+        
+    });
+</script>
+{% endblock %}
+
+

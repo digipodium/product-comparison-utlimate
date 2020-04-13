@@ -8,16 +8,16 @@ from app import db
 from app.models import ScrapedData
 
 sort_options = {
-    'relevance':'rlvncy',
-    'popularity':'plrty',
-    'price low to high':'plth',
-    'price high to low':'phtl',
-    'discount':'dhtl',
-    'new arrivals':'rec'
+    'relevance':'relevance',
+    'popularity':'popularity',
+    'price low to high':'price_asc',
+    'price high to low':'price_desc',
+    'discount':'relevance',
+    'new arrivals':'recency_desc'
 }
 
 
-def snapdealparser(url):
+def flipkartparser(url):
     time.sleep(2)
     headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36'}
     response = requests.get(url, headers=headers)
@@ -25,15 +25,18 @@ def snapdealparser(url):
 
     htmltext = response.text
     soup = BeautifulSoup(htmltext,'html.parser')
-    name = soup.findAll('img',{'class':"cloudzoom"})[0].get('title')
-    price = soup.find('span',{'class':"payBlkBig"})
-    rating = soup.find('span',{'class':"avrg-rating"})
-    photo = soup.findAll('img',{'class':"cloudzoom"})[0].get('src')
-    total_rating = soup.find('span',{'class':'total-rating'})
-    total_reviews = soup.find('span',{'class':'numbr-review'})
+    brand = soup.find('span',{'class':"_2J4LW6"})
+    name = soup.find('span',{'class':"_35KyD6"})
+    price = soup.find('div',{'class':"_1vC4OE _3qQ9m1"})
+    rating = soup.find('div',{'class':"hGSR34 bqXGTW"})
+    try:
+        photo = soup.findAll('div',{'class':"_2_AcLJ"})[0].get('style')[21:-1]
+    except:
+        photo = None
+    reviews_n_ratings = soup.find('span',{'class':'_38sUEc'}).text
     link = url
     if name:
-        output['name'] = name
+        output['name'] = name.text
     else :
         output['name'] = None
             
@@ -52,18 +55,22 @@ def snapdealparser(url):
     else:
         output["photo"] = None
    
-    if total_reviews:
-        output['total_reviews'] = total_reviews.text
+    if reviews_n_ratings:
+        if 'and' in reviews_n_ratings:
+            output['total_reviews'] = reviews_n_ratings.split('and')[1]
     else:
         output["total_reviews"] = np.nan
 
-    if total_rating:
-        output['total_rating']=total_rating.text
+    if reviews_n_ratings :
+        if 'and' in reviews_n_ratings:
+            output['total_rating']=reviews_n_ratings.split('and')[0]
+        else:
+            output['total_rating'] = reviews_n_ratings
     else:
         output['total_rating']= np.nan
 
     output['link'] = link
-    output['website'] = 'snapdeal'
+    output['website'] = 'flipcart'
     return output
 
 
@@ -77,56 +84,55 @@ def snapdealparser(url):
 #     pagelinks = list(set(List))
 #     return pagelinks
 
-def NextPage(keyword = 'mobile',delay=2, item_pos=0, pincode = '226001',sort = sort_options.get('relevance'),searchState = 'k3=true|k5=0|k6=0|k8=0', webpageName = 'searchResult', clickSrc = 'unknown',isMC = False, showAds = False, page = 'srp'):
-    item_pos +=20
-    pattern = re.compile(r"/product/.*/\d{12,20}")
-    url = f"https://www.snapdeal.com/acors/json/product/get/search/0/{item_pos}/20?"
+def NextPage(keyword = 'mobile',delay=1, page=1,sort = sort_options.get('relevance')):
+    pattern = re.compile(r"/[/ 0-9 a-z -]+/p/[0-9a-z]{16,16}") #flipkart product id
+    url = f"https://www.flipkart.com/search?"
     params = {
-        'keyword' : keyword, 'pincode':pincode, 'sort' : sort,
-        'searchState':searchState, 'webpageName' : webpageName, 'clickSrc' : clickSrc,
-        'isMC':isMC , 'showAds' : showAds, 'page' : page}
+        'q' : keyword,
+        'sort' : sort,
+        'page':page,
+        }
 
     htmltext = requests.get(url,params=params).text
     time.sleep(delay)
     List = re.findall(pattern,htmltext)
     pagelinks = list(set(List))
-    return pagelinks, item_pos
+    page +=1
+    return pagelinks, page
     
 
 
 
 def getPageLinks(links,query):
     with open('scraper.log','a') as f:
-        f.write(f"-->{len(links)} links are to be scraped from snapdeal\n")
+        f.write(f"-->{len(links)} links are to be scraped from flipcart\n")
     for i in links:
-        url = "https://www.snapdeal.com"+i
+        url =  "https://www.flipkart.com"+i
         print ("Processing: "+url)
         try:
-            dd = snapdealparser(url) # data dictionary variable
+            dd = flipkartparser(url) # data dictionary variable
+            print(dd)
             scraped_data = ScrapedData(
                 name = dd['name'],
                 price = dd['price'],
                 rating = dd['rating'],
                 photo = dd['photo'],
-                total_reviews = dd['total_reviews'],
-                total_rating = dd['total_rating'],
+                total_reviews = dd.get('total_reviews',np.nan),
+                total_rating = dd.get('total_rating',np.nan),
                 link = dd['link'],
                 website = dd['website'].lower(),
                 query= query.lower(),
             )
             db.session.add(scraped_data)
             db.session.commit()
-        except:
-            pass
+        except :pass
         with open('scraper.log','a') as f:
-            f.write(f"query: {query} | snapdeal, scraped: {i}\n")
-    
+            f.write(f"query: {query} | flipcart, scraped: {i}\n")
     time.sleep(1)
     return "saved info to scraper.log file"
         
-def collect_n_store(query = 'laptops',item_pos = 0,count=500,delay=2,sorting=sort_options.get('relevance') ):
-    count *=60
-    print("running snapdeal scraper")
+def collect_n_store(query = 'laptops',item_pos = 1,count=50,delay=1,sorting=sort_options.get('relevance') ):
+    print("running flipcart scraper")
     print('>query',query)
     print('>item_pos',item_pos)
     print('>limit ',count)
@@ -134,19 +140,20 @@ def collect_n_store(query = 'laptops',item_pos = 0,count=500,delay=2,sorting=sor
     print('>sort option',sorting)
     productlinks = []
     while True:
-        # try:
-        links,pos = NextPage(keyword=query,item_pos=item_pos,delay=delay,sort=sorting)
-        productlinks.extend(links)
-        item_pos = pos
-        print('loading pages',item_pos)
-        if (item_pos>=count):
-            break
-        # except Exception as e:
-        #     print(e)
+        try:
+            links,pos = NextPage(keyword=query,delay=delay,page=item_pos,sort=sorting)
+            productlinks.extend(links)
+            item_pos = pos
+            if (item_pos>=count):
+                break
+            else:
+                print('loading pages',item_pos)
+        except Exception as e:
+            print(e)
     message = getPageLinks(productlinks,query)
     return message
  
 if __name__ == "__main__":
     item_pos = 0
     query = 'laptops'
-    message  = collect_n_store(query=query,item_pos=int(item_pos),count=25,delay=1)
+    message  = collect_n_store(query=query,item_pos=item_pos,count=25,delay=1)

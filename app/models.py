@@ -27,15 +27,39 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return '<User {}>'.format(self.username)   
 
-class Post(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    body = db.Column(db.String(140))
-    created_on = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-    def __repr__(self):
-        return '<Post {}>'.format(self.body)
 
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
+
+class ScrapedData(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    created_on = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    name = db.Column(db.String, unique= True, index=True)
+    price = db.Column(db.String)
+    rating = db.Column(db.String)
+    photo = db.Column(db.String)
+    total_reviews = db.Column(db.String)
+    total_rating = db.Column(db.String)
+    link = db.Column(db.String,unique= True, index=True)
+    query = db.Column(db.String)
+    website= db.Column(db.String)
+
+    def __repr_(self):
+        return self.id
+
+    def to_dict(self):
+        return dict(id = self.id,
+                    date = self.created_on,
+                    name = self.name,
+                    price = self.price,
+                    rating = self.rating,
+                    photo = self.photo,
+                    total_reviews = self.total_reviews,
+                    total_rating = self.total_rating,
+                    link = self.link,
+                    website = self.website,
+                    query = self.query)
+
+

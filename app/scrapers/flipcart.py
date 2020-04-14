@@ -28,7 +28,7 @@ def flipkartparser(url):
     brand = soup.find('span',{'class':"_2J4LW6"})
     name = soup.find('span',{'class':"_35KyD6"})
     price = soup.find('div',{'class':"_1vC4OE _3qQ9m1"})
-    rating = soup.find('div',{'class':"hGSR34 bqXGTW"})
+    rating = soup.find('div',{'class':"hGSR34"})
     try:
         photo = soup.findAll('div',{'class':"_2_AcLJ"})[0].get('style')[21:-1]
     except:
@@ -56,14 +56,14 @@ def flipkartparser(url):
         output["photo"] = None
    
     if reviews_n_ratings:
-        if 'and' in reviews_n_ratings:
-            output['total_reviews'] = reviews_n_ratings.split('and')[1]
+        if '&' in reviews_n_ratings:
+            output['total_reviews'] = reviews_n_ratings.split('&')[1]
     else:
         output["total_reviews"] = np.nan
 
     if reviews_n_ratings :
-        if 'and' in reviews_n_ratings:
-            output['total_rating']=reviews_n_ratings.split('and')[0]
+        if '&' in reviews_n_ratings:
+            output['total_rating']=reviews_n_ratings.split('&')[0]
         else:
             output['total_rating'] = reviews_n_ratings
     else:
@@ -106,7 +106,7 @@ def NextPage(keyword = 'mobile',delay=1, page=1,sort = sort_options.get('relevan
 def getPageLinks(links,query,delay=1):
     with open('scraper.log','a') as f:
         f.write(f"-->{len(links)} links are to be scraped from flipcart\n")
-    for i in links:
+    for i in links[:5]:
         url =  "https://www.flipkart.com"+i
         print ("Processing: "+url)
         try:
@@ -129,8 +129,6 @@ def getPageLinks(links,query,delay=1):
             print("---"*20)
             print(e)
             print("------------------------------"*10)
-            for k,v in dd.items():
-                print(k,v, type(v))
             print("---"*20)
 
         with open('scraper.log','a') as f:
@@ -164,4 +162,4 @@ def collect_n_store(query = 'laptops',item_pos = 1,count=50,delay=1,sorting=sort
 if __name__ == "__main__":
     item_pos = 0
     query = 'laptops'
-    message  = collect_n_store(query=query,item_pos=item_pos,count=25,delay=1)
+    message  = collect_n_store(query=query,item_pos=item_pos,count=1,delay=1)

@@ -19,5 +19,6 @@ please use the requirments.txt to install dependencies
 ## screenshots
 | | |
 |:-------------------------:|:-------------------------:|
-|![login screen](screens/login.png)|![login screen](screens/signup.png)|
-|![login screen](screens/forgot.png)|![login screen](screens/home.png)|
+
+|![login screen](screens/login.png)|![login screen](screens/home.png)|
+|![login screen](screens/search.png)|![login screen](screens/results.png)|

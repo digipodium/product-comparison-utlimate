@@ -2,26 +2,91 @@
 
 {% block css %}
 <style>
-
+  
 </style>
 {% endblock %}
 {% block body %}
-<div class="container">
-    <div class="row my-2">
-        <div class="col-md-12">
-            <div class="card">
-              <div class="card-body">
-                <blockquote class="blockquote">
-                  <p>Visualize Scraped data</p>
-                </blockquote>
-              </div>
+<div class="container-fluid">
+  <div class="row mt-0 pb-3 bg-secondary text-white">
+    <div class="col-sm-4 mx-auto">
+          <h4 class="text-center">Visualization of Scraped Data that app has collected.</h5>
+          <form>
+            <div class="form-group">
+              <select class="form-control" name="keyword" id="keyword">
+                {% for kw in keywordList   %}
+                <option>{{ kw|e }}</option>
+                {% endfor %}
+              </select>
             </div>
-        </div>
+            <button class="btn btn-primary btn-block">Get Updated Visualization
+            </button>
+          </form> 
     </div>
+  </div>
+  <div class="row my-2">
+    <div class="col-md-5 mx-auto">
+      <div class="card shadow=lg">
+        <div class="chart card-body" id="price_barplot_data">
+          <script>
+            var graphs = {{price_barplot_data | safe}};
+            Plotly.plot('price_barplot_data',graphs,{});
+          </script>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-5 mx-auto">
+      <div class="card shadow=lg">
+        <div class="chart card-body" id="comp_item_prices">
+          <script>
+            var graphs = {{comp_item_prices | safe}};
+            Plotly.plot('comp_item_prices',graphs,{});
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row my-2">
+    <div class="col-md-5 mx-auto">
+      <div class="card shadow=lg">
+        <div class="chart card-body" id="comp_item_tot_reviews">
+          <script>
+            var graphs = {{comp_item_tot_reviews | safe}};
+            Plotly.plot('comp_item_tot_reviews',graphs,{});
+          </script>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-5 mx-auto">
+      <div class="card shadow=lg">
+        <div class="chart card-body" id="comp_item_tot_rating">
+          <script>
+            var graphs = {{comp_item_tot_rating | safe}};
+            Plotly.plot('comp_item_tot_rating',graphs,{});
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row my-2">
+    <div class="col-md-5 mx-auto">
+      <div class="card shadow=lg">
+        <div class="chart card-body" id="comp_item_rating">
+          <script>
+            var graphs = {{comp_item_rating | safe}};
+            Plotly.plot('comp_item_rating',graphs,{});
+          </script>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-5 mx-auto">
+      <div class="card shadow=lg">
+        
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
-{% block js %}
-<script>
-
-</script>
+{% block headjs %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
 {% endblock %}

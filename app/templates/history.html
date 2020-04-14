@@ -1,52 +1,13 @@
 {% extends 'base.html' %}
 
+{% block css %}
 
-{% block css %}{% endblock %}
-{% block js %}{% endblock %}
+{% endblock %}
+{% block js %}
+
+{% endblock %}
 {% block body %}
 <div class="container">
-    <div class="row mt-3">
-        <div class="col-sm-3 mt-xs-1">
-            <div class="card bg-secondary text-white">
-                <div class="card-body">
-                    <div class="card-title">Keyword</div>
-                    
-                    <b>{{session.keyword}}</b>
-                    
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-3 mt-xs-1">
-            <div class="card bg-secondary text-white">
-                <div class="card-body">
-                    <div class="card-title">Page Size</div>
-                    
-                    <b>{{session.page_limit}}</b>
-                    
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-3 mt-xs-1">
-            <div class="card bg-secondary text-white">
-                <div class="card-body">
-                    <div class="card-title">Delay (in sec)</div>
-                    
-                    <b>{{session.delay}}</b>
-                    
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-3 mt-xs-1">
-            <div class="card bg-secondary text-white">
-                <div class="card-body">
-                    <div class="card-title">Sort style</div>
-                    
-                    <b>{{session.sort_order}}</b>
-                    
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="row">
         <div class="col-md-12 my-2 p-2 text-center ">
             <div class="card bg-warning">
@@ -64,13 +25,13 @@
                     <tr>
                         <td>
                             {% if prev_url %}
-                            <a class="btn btn-info btn-sm" href="{{prev_url}}" role="button">Previous</a>
+                            <a class="btn btn-info btn-sm" href="{{prev_url}}" role="button">Previous  &nbsp;<i class="fa fa-arrow-left" aria-hidden="true"></i></a>
                             {% endif %}
                         </td>
                         <td colspan="9"></td>
                         <td class="text-right">
                             {% if next_url %}
-                            <a class="btn btn-info btn-sm" href="{{next_url}}" role="button">Next</a>
+                            <a class="btn btn-info btn-sm" href="{{next_url}}" role="button">Next &nbsp;<i class="fa fa-arrow-right" aria-hidden="true"></i></a>
                             {% endif %}
                         </td>
                     </tr>
@@ -86,7 +47,7 @@
                         <th scope="col">website</th>
                         <th scope="col">keyword</th>
                         <th scope="col">link</th>
-
+    
                     </tr>
                 </thead>
                 <tbody>
@@ -94,9 +55,9 @@
                     <tr>
                         <td class="bg-white text-center">
                             {% if item.photo %}
-                            <img src="{{item.photo}}" style="height: 200px !important;" alt="{{item.name}}">
+                            <img src="{{item.photo}}" style="height: 100px !important;" alt="{{item.name}}">
                             {% else %}
-                            <img src="/static/images/default.png" style="height: 200px !important;" alt="{{item.name}}">
+                            <img src="/static/images/default.png" style="height: 100px !important;" alt="{{item.name}}">
                             {% endif %}
                             
                            
@@ -118,13 +79,13 @@
                     <tr>
                         <td>
                             {% if prev_url %}
-                            <a class="btn btn-info btn-sm" href="{{prev_url}}" role="button">Previous</a>
+                            <a class="btn btn-info btn-sm" href="{{prev_url}}" role="button">Previous  &nbsp;<i class="fa fa-arrow-left" aria-hidden="true"></i></a>
                             {% endif %}
                         </td>
                         <td colspan="9"></td>
                         <td class="text-right">
                             {% if next_url %}
-                            <a class="btn btn-info btn-sm" href="{{next_url}}" role="button">Next</a>
+                            <a class="btn btn-info btn-sm" href="{{next_url}}" role="button">Next  &nbsp;<i class="fa fa-arrow-right" aria-hidden="true"></i></a>
                             {% endif %}
                         </td>
                     </tr>
@@ -134,3 +95,4 @@
     </div>
 </div>
 {% endblock %}
+ 

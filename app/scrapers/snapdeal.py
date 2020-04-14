@@ -120,9 +120,6 @@ def getPageLinks(links,query,delay=1):
             print("---"*20)
             print(e)
             print("------------------------------"*10)
-            for k,v in dd.items():
-                print(k,v, type(v))
-            print("---"*20)
         with open('scraper.log','a') as f:
             f.write(f"query: {query} | snapdeal, scraped: {i}\n")
     

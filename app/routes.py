@@ -6,6 +6,8 @@ import os
 import pandas as pd
 from datetime import datetime
 from app.scrapers import snapdeal,flipcart
+from app import preprocessing as pp
+from app import visualizer as vis
 
 @app.route('/',)
 @app.route('/index')
@@ -34,7 +36,6 @@ def login():
             return redirect(url_for('index'))
     return render_template('login.html', title='Sign In')
 
-    
 @app.route('/register',methods=['GET', 'POST'])
 def register():
     if request.method=='POST':
@@ -67,7 +68,6 @@ def register():
 
     return render_template('register.html', title='Sign Up page')
 
-
 @app.route('/forgot',methods=['GET', 'POST'])
 def forgot():
     if request.method=='POST':
@@ -76,7 +76,6 @@ def forgot():
             flash('password sent to email, please check your inbox')
     return render_template('forgot.html', title='Password reset page')
     
-
 @app.route('/logout')
 def logout():
     logout_user()
@@ -87,7 +86,6 @@ def logout():
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     return render_template('profile.html', user=user, title=f'{user.username} profile')
-
 
 @app.before_request
 def before_request():
@@ -105,8 +103,6 @@ def edit_profile():
         flash('Your changes have been saved.','success')
         return redirect(url_for('edit_profile'))
     return render_template('edit_profile.html', title='Edit Profile',user=user)
-
-
 
 @app.route('/scraper_run',methods=['GET','POST'])
 def scraper_run_api():
@@ -127,7 +123,6 @@ def scraper_run_api():
     else:
         return redirect('/')
     
-
 @app.route('/execute',methods=['POST'])
 def execute_scrapers():
     if request.method == 'POST':
@@ -146,7 +141,6 @@ def execute_scrapers():
         session['executing'] = False
         return jsonify(status='success',scraper_status = session['executing'])
     
-
 @app.route('/scraper_status')
 def scraper_status_api():
     if os.path.exists('scraper.log'):
@@ -172,6 +166,29 @@ def view_results():
     return render_template('search_results.html',scraped_data=data.items, next_url=next_url,prev_url=prev_url)
 
 
+@app.route('/history')
+def history():
+    page = request.args.get('page',1,type=int)
+    data = ScrapedData.query.paginate(page,app.config['DATASET_SIZE'] ,False)
+    prev_url = url_for('history',page=data.prev_num) if data.has_prev else None
+    next_url = url_for('history',page=data.next_num) if data.has_next else None
+    return render_template('history.html',scraped_data = data.items, next_url=next_url,prev_url=prev_url)
+
 @app.route('/visualize')
 def visualize():
-    return render_template('visualize.html')
+    keyword = request.args.get('keyword','bottles')
+    dataset = vis.load_data(db)
+    kList = dataset.keyword.unique()
+    price_barplot_data = vis.bar_polar_price_distribution(dataset, kw=keyword,title=f'{keyword} price distribution on eccomerce websites'.upper())
+    comp_item_prices = vis.hist_comparison_of_item_prices(dataset, kw=keyword,title=f'{keyword} price comparison'.upper())
+    comp_item_tot_rating = vis.hist_comparison_of_item_total_ratings(dataset, kw=keyword, title =f'{keyword} total ratings comparison'.upper() )
+    comp_item_tot_reviews = vis.hist_comparison_of_item_total_reviews(dataset,kw=keyword, title =f'{keyword} total reviews comparison'.upper() )
+    comp_item_rating = vis.hist_comparison_of_item_rating( dataset,kw=keyword, title =f'{keyword} rating comparison'.upper() )
+    
+    return render_template('visualize.html', 
+                            price_barplot_data=price_barplot_data,
+                            comp_item_prices = comp_item_prices,
+                            comp_item_tot_reviews = comp_item_tot_reviews,
+                            comp_item_tot_rating = comp_item_tot_rating,
+                            comp_item_rating = comp_item_rating,
+                            keywordList=kList, )

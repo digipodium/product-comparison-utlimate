@@ -81,7 +81,7 @@
 <div class="container">
     <div class="row mt-3">
         <div class="col-sm-12">
-            <p class="lead text-center">
+            <p class="lead text-center rafu">
                 Dont refresh the page, Scraper is running. After completion update will be displayed
             </p>
             <div aria-hidden="true" class="loader">
@@ -136,15 +136,13 @@
     
     <div class="row mt-3">
         <div class="col-12">
-            
-            <div class="card container">
-                
+            <div class="card wrapper">
                 <div class="card-body text-center">
                     <h3 class="display-4 scraper_state">Scraping Status : <span class="badge badge-pill badge-primary">Running</span></h3>
-                    <p class="card-text">we will check updates periodically</p>
+                    <p class="card-text rafu">we will check updates periodically</p>
                 </div>
-                <ul class="list-group list-group-flush" id="api_status">
-                    <li class="list-group-item text-center">started scraping</li>
+                <ul class="list-group list-group-flush rafu" id="api_status">
+                    <li class="list-group-item text-center">starting scraping</li>
                 </ul>
               
             </div>
@@ -160,16 +158,16 @@
             url: '/scraper_status',
             type: 'get',
             success: function(response){
-                console.log("status"+response['last_line'],+response['size'])
-                $('#api_status li').slideUp().html('<b>'+response['size']+' - '+response['last_line']+'</b>').slideDown()
+                $('#api_status li').slideUp().html('<b><span class="badge badge-primary">'+response['size']+'</span> '+response['last_line']+'</b>').slideDown()
             }
         });
     }
 
     function updateUI(status) {
         $('.scraper_state span').text("Complete").toggleClass("badge-success badge-primary")
-        $('.card.container').append('<div class="card-footer">'+status+' <a  class="btn btn-success" href="/view_results" >View Result</a> </div>')
+        $('.card.wrapper').append('<div class="card-footer"><a  class="btn btn-success btn-block" href="/view_results" >View Result</a> </div>')
         $('.loader').slideUp()
+        $('.rafu').slideUp()
     }
     $(function () {
         data ={}
@@ -181,12 +179,11 @@
         $.ajax({
             type: "POST",
             url: "/execute",
-            data: "",
+            data: {'query':'{{session.keyword}}'},
             dataType: "text/plain",
-            success: function (response) {
+            complete:function(response){
                 console.log(response['status']+"\n"+response['scraper_status'])
                 clearInterval(interval)
-                alert('done')
                 updateUI(response['status'])
             }
         });

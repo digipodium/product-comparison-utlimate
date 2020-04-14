@@ -103,7 +103,7 @@ def NextPage(keyword = 'mobile',delay=1, page=1,sort = sort_options.get('relevan
 
 
 
-def getPageLinks(links,query):
+def getPageLinks(links,query,delay=1):
     with open('scraper.log','a') as f:
         f.write(f"-->{len(links)} links are to be scraped from flipcart\n")
     for i in links:
@@ -111,7 +111,7 @@ def getPageLinks(links,query):
         print ("Processing: "+url)
         try:
             dd = flipkartparser(url) # data dictionary variable
-            print(dd)
+            # print(dd)
             scraped_data = ScrapedData(
                 name = dd['name'],
                 price = dd['price'],
@@ -121,23 +121,30 @@ def getPageLinks(links,query):
                 total_rating = dd.get('total_rating',np.nan),
                 link = dd['link'],
                 website = dd['website'].lower(),
-                query= query.lower(),
+                keyword= query.lower(),
             )
             db.session.add(scraped_data)
             db.session.commit()
-        except :pass
+        except Exception as e:
+            print("---"*20)
+            print(e)
+            print("------------------------------"*10)
+            for k,v in dd.items():
+                print(k,v, type(v))
+            print("---"*20)
+
         with open('scraper.log','a') as f:
             f.write(f"query: {query} | flipcart, scraped: {i}\n")
-    time.sleep(1)
+    time.sleep(delay)
     return "saved info to scraper.log file"
         
 def collect_n_store(query = 'laptops',item_pos = 1,count=50,delay=1,sorting=sort_options.get('relevance') ):
-    print("running flipcart scraper")
-    print('>query',query)
-    print('>item_pos',item_pos)
-    print('>limit ',count)
-    print('>delay',delay)
-    print('>sort option',sorting)
+    # print("running flipcart scraper")
+    # print('>query',query)
+    # print('>item_pos',item_pos)
+    # print('>limit ',count)
+    # print('>delay',delay)
+    # print('>sort option',sorting)
     productlinks = []
     while True:
         try:
@@ -145,12 +152,13 @@ def collect_n_store(query = 'laptops',item_pos = 1,count=50,delay=1,sorting=sort
             productlinks.extend(links)
             item_pos = pos
             if (item_pos>=count):
+                print("links:", len(links),"\npos:",pos)
                 break
             else:
                 print('loading pages',item_pos)
         except Exception as e:
             print(e)
-    message = getPageLinks(productlinks,query)
+    message = getPageLinks(productlinks,query,delay)
     return message
  
 if __name__ == "__main__":

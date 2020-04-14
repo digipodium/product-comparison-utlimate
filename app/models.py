@@ -36,20 +36,20 @@ def load_user(id):
 class ScrapedData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     created_on = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    name = db.Column(db.String, unique= True, index=True)
+    name = db.Column(db.String)
     price = db.Column(db.String)
     rating = db.Column(db.String)
     photo = db.Column(db.String)
     total_reviews = db.Column(db.String)
     total_rating = db.Column(db.String)
-    link = db.Column(db.String,unique= True, index=True)
-    query = db.Column(db.String)
+    link = db.Column(db.String, )
+    keyword = db.Column(db.String)
     website= db.Column(db.String)
 
     def __repr_(self):
         return self.id
 
-    def to_dict(self):
+    def dictionary(self):
         return dict(id = self.id,
                     date = self.created_on,
                     name = self.name,
@@ -60,6 +60,6 @@ class ScrapedData(db.Model):
                     total_rating = self.total_rating,
                     link = self.link,
                     website = self.website,
-                    query = self.query)
+                    keyword = self.keyword)
 
 

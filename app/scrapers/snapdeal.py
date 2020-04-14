@@ -95,7 +95,7 @@ def NextPage(keyword = 'mobile',delay=2, item_pos=0, pincode = '226001',sort = s
 
 
 
-def getPageLinks(links,query):
+def getPageLinks(links,query,delay=1):
     with open('scraper.log','a') as f:
         f.write(f"-->{len(links)} links are to be scraped from snapdeal\n")
     for i in links:
@@ -112,26 +112,31 @@ def getPageLinks(links,query):
                 total_rating = dd['total_rating'],
                 link = dd['link'],
                 website = dd['website'].lower(),
-                query= query.lower(),
+                keyword= query.lower(),
             )
             db.session.add(scraped_data)
             db.session.commit()
-        except:
-            pass
+        except Exception as e:
+            print("---"*20)
+            print(e)
+            print("------------------------------"*10)
+            for k,v in dd.items():
+                print(k,v, type(v))
+            print("---"*20)
         with open('scraper.log','a') as f:
             f.write(f"query: {query} | snapdeal, scraped: {i}\n")
     
-    time.sleep(1)
+    time.sleep(delay)
     return "saved info to scraper.log file"
         
 def collect_n_store(query = 'laptops',item_pos = 0,count=500,delay=2,sorting=sort_options.get('relevance') ):
-    count *=60
-    print("running snapdeal scraper")
-    print('>query',query)
-    print('>item_pos',item_pos)
-    print('>limit ',count)
-    print('>delay',delay)
-    print('>sort option',sorting)
+    count *=30
+    # print("running snapdeal scraper")
+    # print('>query',query)
+    # print('>item_pos',item_pos)
+    # print('>limit ',count)
+    # print('>delay',delay)
+    # print('>sort option',sorting)
     productlinks = []
     while True:
         # try:
@@ -140,10 +145,13 @@ def collect_n_store(query = 'laptops',item_pos = 0,count=500,delay=2,sorting=sor
         item_pos = pos
         print('loading pages',item_pos)
         if (item_pos>=count):
+            print("links:", len(links),"\npos:",pos)
             break
+        else:
+            print('loading pages',item_pos)
         # except Exception as e:
         #     print(e)
-    message = getPageLinks(productlinks,query)
+    message = getPageLinks(productlinks,query,delay)
     return message
  
 if __name__ == "__main__":

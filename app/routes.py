@@ -1,7 +1,7 @@
 from flask import render_template,redirect,request,flash,session,url_for, jsonify
 from flask_login import logout_user,current_user, login_user, login_required
 from app import app,db
-from app.models import User
+from app.models import User,ScrapedData
 import os
 import pandas as pd
 from datetime import datetime
@@ -42,7 +42,7 @@ def register():
         username = request.form.get('username')
         cpassword = request.form.get('cpassword')
         password = request.form.get('password')
-        print(cpassword, password, cpassword==password)
+        # print(cpassword, password, cpassword==password)
         if username and password and cpassword and email:
             if cpassword != password:
                 flash('Password do not match','danger')
@@ -120,10 +120,13 @@ def scraper_run_api():
             session['sort_order'] = sort_order
             session['page_limit'] = page_limit
             session['delay'] = delay
+            return render_template('search.html',title="Search to Compare")
         else:
             flash("please enter an item category to search and compare using scraper",'danger')
             return redirect('/')
-    return render_template('search.html',title="Search to Compare")
+    else:
+        return redirect('/')
+    
 
 @app.route('/execute',methods=['POST'])
 def execute_scrapers():
@@ -134,15 +137,15 @@ def execute_scrapers():
         sort_order = session['sort_order']
         page_limit = session['page_limit']
         delay = session['delay'] 
-        print(session)
+        # print(session)
         sop = snapdeal.sort_options.get(sort_order)
-        print(sort_order)
         message = flipcart.collect_n_store(query=keyword,count=int(page_limit),delay=int(delay),sorting=sop)
         print(message)
         message = snapdeal.collect_n_store(query=keyword,count=int(page_limit),delay=int(delay),sorting=sop)
         print(message)
         session['executing'] = False
-    return jsonify(status='success',scraper_status = session['executing'])
+        return jsonify(status='success',scraper_status = session['executing'])
+    
 
 @app.route('/scraper_status')
 def scraper_status_api():
@@ -152,7 +155,23 @@ def scraper_status_api():
             for size,last_line in enumerate(f):
                 pass
             f.close()
+            session['log'] = last_line
             return jsonify(size=size,last_line=last_line)
         except Exception as e:
             print(e)
             return jsonify(size='unknown',last_line='unknown')
+
+@app.route('/view_results')
+def view_results():
+    keyword = session['keyword']
+    page = request.args.get('page',1,type=int)
+    data = ScrapedData.query.filter_by(keyword=keyword).order_by(ScrapedData.created_on).paginate(page,app.config['DATASET_SIZE'] ,False)
+
+    prev_url = url_for('view_results',page=data.prev_num) if data.has_prev else None
+    next_url = url_for('view_results',page=data.next_num) if data.has_next else None
+    return render_template('search_results.html',scraped_data=data.items, next_url=next_url,prev_url=prev_url)
+
+
+@app.route('/visualize')
+def visualize():
+    return render_template('visualize.html')

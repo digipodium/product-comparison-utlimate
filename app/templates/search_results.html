@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+
+{% block css %}{% endblock %}
+{% block js %}{% endblock %}
+{% block body %}
+<div class="container">
+    <div class="row mt-3">
+        <div class="col-sm-3 mt-xs-1">
+            <div class="card bg-secondary text-white">
+                <div class="card-body">
+                    <div class="card-title">Keyword</div>
+                    
+                    <b>{{session.keyword}}</b>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 mt-xs-1">
+            <div class="card bg-secondary text-white">
+                <div class="card-body">
+                    <div class="card-title">Page Size</div>
+                    
+                    <b>{{session.page_limit}}</b>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 mt-xs-1">
+            <div class="card bg-secondary text-white">
+                <div class="card-body">
+                    <div class="card-title">Delay (in sec)</div>
+                    
+                    <b>{{session.delay}}</b>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 mt-xs-1">
+            <div class="card bg-secondary text-white">
+                <div class="card-body">
+                    <div class="card-title">Sort style</div>
+                    
+                    <b>{{session.sort_order}}</b>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 my-2 p-2 text-center ">
+            <div class="card bg-warning">
+                <div class="card-body">
+                    <div class="lead">View analysis report using Data science <a href="/visualize" class="btn btn-primary">Visualize</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row my-2">
+        <div class="col-12">
+            <h3 class="display-4 text-center">Scraped Data list</h3>
+            <table class="table table-sm table-dark table-hover shadow-lg">
+                
+                
+                <thead>
+                    <tr>
+                        <td>
+                            {% if prev_url %}
+                            <a class="btn btn-info btn-sm" href="{{prev_url}}" role="button">Previous</a>
+                            {% endif %}
+                        </td>
+                        <td colspan="9"></td>
+                        <td class="text-right">
+                            {% if next_url %}
+                            <a class="btn btn-info btn-sm" href="{{next_url}}" role="button">Next</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="col">image</th>
+                        <th scope="col">id</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">price</th>
+                        <th scope="col">rating</th>
+                        <th scope="col">total_reviews</th>
+                        <th scope="col">total_rating</th>
+                        <th scope="col">website</th>
+                        <th scope="col">keyword</th>
+                        <th scope="col">link</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in scraped_data %}
+                    <tr>
+                        <td class="bg-white text-center">
+                            {% if item.photo %}
+                            <img src="{{item.photo}}" style="height: 200px !important;" alt="{{item.name}}">
+                            {% else %}
+                            <img src="/static/images/default.png" style="height: 200px !important;" alt="{{item.name}}">
+                            {% endif %}
+                            
+                           
+                        </td>
+                        <td scope="row">{{item.id}}</td>
+                        <td>{{item.created_on}}</td>
+                        <th>{{item.name}}</th>
+                        <td>{{item.price}}</td>
+                        <td>{{item.rating}}</td>
+                        <td>{{item.total_reviews}}</td>
+                        <td>{{item.total_rating}}</td>
+                        <td>{{item.website}}</td>
+                        <td>{{item.keyword}}</td>
+                        <td><a href="{{item.link}}" class="btn btn-dark btn-lg btn-block btn-primary">Visit</a></td>
+                    </tr>   
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>
+                            {% if prev_url %}
+                            <a class="btn btn-info btn-sm" href="{{prev_url}}" role="button">Previous</a>
+                            {% endif %}
+                        </td>
+                        <td colspan="9"></td>
+                        <td class="text-right">
+                            {% if next_url %}
+                            <a class="btn btn-info btn-sm" href="{{next_url}}" role="button">Next</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

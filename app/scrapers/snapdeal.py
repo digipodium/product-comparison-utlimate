@@ -127,7 +127,7 @@ def getPageLinks(links,query,delay=1):
     return "saved info to scraper.log file"
         
 def collect_n_store(query = 'laptops',item_pos = 0,count=500,delay=2,sorting=sort_options.get('relevance') ):
-    count *=30
+    count *= 30*2
     # print("running snapdeal scraper")
     # print('>query',query)
     # print('>item_pos',item_pos)

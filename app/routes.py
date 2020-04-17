@@ -8,6 +8,7 @@ from datetime import datetime
 from app.scrapers import snapdeal,flipcart
 from app import preprocessing as pp
 from app import visualizer as vis
+from app import analyzer as az
 
 @app.route('/',)
 @app.route('/index')
@@ -184,6 +185,12 @@ def visualize():
     comp_item_tot_rating = vis.hist_comparison_of_item_total_ratings(dataset, kw=keyword, title =f'{keyword} total ratings comparison'.upper() )
     comp_item_tot_reviews = vis.hist_comparison_of_item_total_reviews(dataset,kw=keyword, title =f'{keyword} total reviews comparison'.upper() )
     comp_item_rating = vis.hist_comparison_of_item_rating( dataset,kw=keyword, title =f'{keyword} rating comparison'.upper() )
+    comp_item_counts = vis.bar_product_count(dataset,kw=keyword)
+    comp_item_p_avg = vis.pie_product_avg_price(dataset,kw=keyword)
+    comp_item_p_max = vis.pie_product_max_price(dataset,kw=keyword)
+    comp_item_p_min = vis.pie_product_min_price(dataset,kw=keyword)
+    comp_item_p_std = vis.pie_product_std_price(dataset,kw=keyword)
+
     
     return render_template('visualize.html', 
                             price_barplot_data=price_barplot_data,
@@ -191,4 +198,48 @@ def visualize():
                             comp_item_tot_reviews = comp_item_tot_reviews,
                             comp_item_tot_rating = comp_item_tot_rating,
                             comp_item_rating = comp_item_rating,
+                            comp_item_counts = comp_item_counts,
+                            comp_item_p_avg = comp_item_p_avg,
+                            comp_item_p_max = comp_item_p_max,
+                            comp_item_p_min = comp_item_p_min,
+                            comp_item_p_std = comp_item_p_std,
                             keywordList=kList, )
+
+@app.route('/analysis')
+def analyse():
+    kw = request.args.get('keyword','bottles')
+    dataset = az.load_data(db)
+    kList = dataset.keyword.unique()
+    maxprice = az.max_price_data(dataset,kw)
+    minprice= az.min_price_data(dataset,kw)
+    maxrating = az.max_ratings_data(dataset,kw)
+    minrating = az.min_ratings_data(dataset,kw)
+    totdata =az.total_data(dataset,kw)
+    totprice = az.total_price(dataset,kw)
+    totreviews = az.total_reviews(dataset,kw)
+    totrating = az.total_rating(dataset,kw)
+    print(maxprice)
+    print('-'*20)
+    print(minprice)
+    print('-'*20)
+    print(maxrating)
+    print('-'*20)
+    print(minrating)
+    print('-'*20)
+    print(totdata)
+    print('-'*20)
+    print(totreviews)
+    print('-'*20)
+    print(totrating)
+
+    return render_template('analyse.html',
+                            keywordList=kList,
+                            maxprice = maxprice,
+                            minprice =minprice,
+                            maxrating= maxrating,
+                            minrating= minrating,
+                            totdata= totdata,
+                            totprice= totprice,
+                            totreviews= totreviews,
+                            totrating= totrating,
+                            )

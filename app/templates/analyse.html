@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block css %}
+<style>
+    
+</style>
+{% endblock %}
+{% block body %}
+<div class="container-fluid">
+    <div class="row mt-0 pb-3 bg-secondary text-white">
+        <div class="col-sm-6 mx-auto">
+            <h4 class="text-center">Analysis of Scraped Data that app has collected.</h5>
+                <form>
+                    <div class="form-group">
+                        <select class="form-control" name="keyword" id="keyword">
+                            {% for kw in keywordList   %}
+                            <option>{{ kw|e }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button class="btn btn-primary btn-block">Get Analysis
+                    </button>
+                    <div class="lead">Some graph may be empty when related data is not available. Skip over those. This is not a code error. The product does not have relevant data</div>
+                </form> 
+            </div>
+        </div>
+    </div>
+</div>
+.<div class="container">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header text-center">
+                    <p class="lead">Maximum priced Item</p>
+                </div>
+                <img src="{{maxprice[4]}}" style="height: 200px !important;" alt="">
+                <div class="card-body">
+                    <h5 class="card-title small">{{maxprice[1]}}</h5>
+                    <p class="card-text"><i class="fas fa-rupee-sign"></i> <b>{{maxprice[2]}}</b> , <i class="fa fa-star" aria-hidden="true"></i>{{maxprice[-4]}}</p>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-danger btn-block" target="blank" href="{{maxprice[-3]}}" role="button">buy</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header text-center">
+                    <p class="lead">Minimum priced Item</p>
+                </div>
+                <img src="{{minprice[4]}}" style="height: 200px !important;" alt="">
+                <div class="card-body">
+                    <h5 class="card-title small">{{minprice[1]}}</h5>
+                    <p class="card-text"><i class="fas fa-rupee-sign"></i> <b>{{minprice[2]}}</b> , <i class="fa fa-star" aria-hidden="true"></i>{{minprice[-4]}}</p>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-danger btn-block" target="blank" href="{{minprice[-3]}}" role="button">buy</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header text-center">
+                    <p class="lead">Maximum rated Item</p>
+                </div>
+                <img src="{{maxrating[4]}}" style="height: 200px !important;" alt="">
+                <div class="card-body">
+                    <h5 class="card-title small">{{maxrating[1]}}</h5>
+                    <p class="card-text"><i class="fas fa-rupee-sign"></i> <b>{{maxrating[2]}}</b> , <i class="fa fa-star" aria-hidden="true"></i>{{maxrating[-4]}}</p>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-danger btn-block" target="blank" href="{{maxrating[-3]}}" role="button">buy</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header text-center">
+                    <p class="lead">Minimum rated Item</p>
+                </div>
+                <img src="{{minrating[4]}}" style="height: 200px !important;" alt="">
+                <div class="card-body">
+                    <h5 class="card-title small">{{minrating[1]}}</h5>
+                    <p class="card-text"><i class="fas fa-rupee-sign"></i> <b>{{minrating[2]}}</b> , <i class="fa fa-star" aria-hidden="true"></i>{{maxprice[-4]}}</p>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-danger btn-block" target="blank" href="{{minrating[-3]}}" role="button">buy</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid bg-dark mt-3">
+    
+    <div class="row py-5">
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="card-title">Total data Scraped</h3>
+                    <p class="card-text">{{totdata}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="card-title">Total Price of Scraped data</h3>
+                    <p class="card-text">{{totprice}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="card-title">Total reviews of Scraped data</h3>
+                    <p class="card-text">{{totreviews}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="card-title">Total rating of scraped data</h3>
+                    <p class="card-text">{{totrating}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+{% endblock %}

@@ -2,9 +2,7 @@
 
 {% block css %}
 <style>
-  .svg-container{
-    margin: auto !important;
-  }
+  
 </style>
 {% endblock %}
 {% block body %}
@@ -22,8 +20,6 @@
             </div>
             <button class="btn btn-primary btn-block">Get Updated Visualization
             </button>
-            <a class="btn btn-success  btn-block" href="/analysis" role="button">View analysis results</a>
-            <div class="lead">Some graph may be empty when related data is not available. Skip over those. This is not a code error. The product does not have relevant data</div>
           </form> 
         </div>
   </div>
@@ -84,56 +80,7 @@
     </div>
     <div class="col-md-5 mx-auto">
       <div class="card shadow=lg">
-        <div class="chart card-body" id="comp_item_counts">
-          <script>
-            var graphs = {{comp_item_counts | safe}};
-            Plotly.plot('comp_item_counts',graphs,{});
-          </script>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row my-2">
-    <div class="col-md-5 mx-auto">
-      <div class="card shadow=lg">
-        <div class="chart card-body" id="comp_item_p_avg">
-          <script>
-            var graphs = {{comp_item_p_avg | safe}};
-            Plotly.plot('comp_item_p_avg',graphs,{});
-          </script>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-5 mx-auto">
-      <div class="card shadow=lg">
-        <div class="chart card-body" id="comp_item_p_max">
-          <script>
-            var graphs = {{comp_item_p_max | safe}};
-            Plotly.plot('comp_item_p_max',graphs,{});
-          </script>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row my-2">
-    <div class="col-md-5 mx-auto">
-      <div class="card shadow=lg">
-        <div class="chart card-body" id="comp_item_p_min">
-          <script>
-            var graphs = {{comp_item_p_min | safe}};
-            Plotly.plot('comp_item_p_min',graphs,{});
-          </script>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-5 mx-auto">
-      <div class="card shadow=lg">
-        <div class="chart card-body" id="comp_item_p_std">
-          <script>
-            var graphs = {{comp_item_p_std | safe}};
-            Plotly.plot('comp_item_p_std',graphs,{});
-          </script>
-        </div>
+        
       </div>
     </div>
   </div>

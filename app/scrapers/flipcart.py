@@ -106,7 +106,7 @@ def NextPage(keyword = 'mobile',delay=1, page=1,sort = sort_options.get('relevan
 def getPageLinks(links,query,delay=1):
     with open('scraper.log','a') as f:
         f.write(f"-->{len(links)} links are to be scraped from flipcart\n")
-    for i in links[:5]:
+    for i in links:
         url =  "https://www.flipkart.com"+i
         print ("Processing: "+url)
         try:

@@ -2,3 +2,4 @@ flask-sqlalchemy
 flask-migrate
 python-dotenv
 flask-login
+plotly

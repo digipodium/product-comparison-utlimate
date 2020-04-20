@@ -8,17 +8,14 @@ please use the requirments.txt to install dependencies
 
 `pip install -r requirments.txt`
 
-## to run app
+## setup database
 
 `flask db migrate`
 
 `flask db upgrade`
 
+## to run app
+
 `flask run`
 
-## screenshots
-| | |
-|:-------------------------:|:-------------------------:|
 
-|![login screen](screens/login.png)|![login screen](screens/home.png)|
-|![login screen](screens/search.png)|![login screen](screens/results.png)|

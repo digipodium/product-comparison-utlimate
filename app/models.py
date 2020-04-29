@@ -46,7 +46,7 @@ class ScrapedData(db.Model):
     keyword = db.Column(db.String)
     website= db.Column(db.String)
 
-    def __repr_(self):
+    def __repr__(self):
         return self.id
 
     def dictionary(self):

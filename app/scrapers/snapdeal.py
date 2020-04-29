@@ -153,5 +153,4 @@ def collect_n_store(query = 'laptops',item_pos = 0,count=500,delay=2,sorting=sor
  
 if __name__ == "__main__":
     item_pos = 0
-    query = 'laptops'
-    message  = collect_n_store(query=query,item_pos=int(item_pos),count=25,delay=1)
+    message  = collect_n_store()
